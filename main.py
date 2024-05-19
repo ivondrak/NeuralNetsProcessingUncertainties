@@ -1,5 +1,5 @@
 # This is a sample Python script.
-from NeuralNetsProcessingUncertainties.backpropagation import BackPropagation
+from backpropagation import BackPropagation
 
 
 # Press ⌃R to execute it or replace it with your code.
