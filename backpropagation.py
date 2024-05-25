@@ -150,3 +150,41 @@ class BackPropagation:
             error = np.max(np.abs(np.array(desired_output) - np.array(predicted_output)))
             max_error = max(max_error, error)
         return max_error  
+    
+
+class IntervalNeuralNet(BackPropagation):
+    def __init__(self, training_set, topology, learning_rates, epochs):
+        super().__init__(training_set, topology, learning_rates, epochs)
+
+
+    def interval_run(self, input_data):
+        lower_input = []
+        upper_input = []
+        for item in input_data:
+            if isinstance(item, tuple):
+                lower_input.append(item[0])
+                upper_input.append(item[1])
+            else:
+                lower_input.append(item)
+                upper_input.append(item)
+        interval_data = list(zip(lower_input, upper_input))
+        return interval_data
+        """
+        lower_activations = []
+        upper_activations = []
+
+        # Perform feed forward with lower bounds
+        self.feed_forward(self.lower_bounds)
+        lower_activations.append(self.activations[-1].copy())
+
+        # Perform feed forward with upper bounds
+        self.feed_forward(self.upper_bounds)
+        upper_activations.append(self.activations[-1].copy())
+
+        # Perform feed forward with input data
+        self.feed_forward(input_data)
+        lower_activations.append(self.activations[-1].copy())
+        upper_activations.append(self.activations[-1].copy())
+
+        return lower_activations, upper_activations
+        """
