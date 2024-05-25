@@ -1,5 +1,5 @@
 # This is a sample Python script.
-from backpropagation import BackPropagation
+from backpropagation import IntervalNeuralNet
 
 
 # Press ⌃R to execute it or replace it with your code.
@@ -20,7 +20,7 @@ net_input = [0.5, 1.0, 0.0, 1.0, 1.0]
 def run_backpropagation():
 
     # Use a breakpoint in the code line below to debug your script.
-    bpnn = BackPropagation(training_set, [5, 10, 10, 3], [0.3, 0.1, 0.1], 1000)
+    bpnn = IntervalNeuralNet(training_set, [5, 10, 10, 3], [0.3, 0.1, 0.1], 1000)
     bpnn.backpropagation()
     output = bpnn.run(net_input)
     print("Result is: ", output)
