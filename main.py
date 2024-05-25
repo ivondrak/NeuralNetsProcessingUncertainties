@@ -14,7 +14,7 @@ training_set = [
     ([1.0, 1.0, 0.0, 0.5, 0.5], [1.0, 0.0, 0.0])
  ]
 
-net_input = [0.5, 1.0, 0.0, 1.0, 1.0]
+net_input = [(0.5, 0.7), 1.0, 1.0, 1.0, (0.0, 1.0)]
 
 
 def run_backpropagation():
@@ -22,7 +22,7 @@ def run_backpropagation():
     # Use a breakpoint in the code line below to debug your script.
     bpnn = IntervalNeuralNet(training_set, [5, 10, 10, 3], [0.3, 0.1, 0.1], 1000)
     bpnn.backpropagation()
-    output = bpnn.run(net_input)
+    output = bpnn.interval_run(net_input)
     print("Result is: ", output)
     print("Mean squared error is: ", bpnn.calculate_mean_squared_error())
     print("Max error of a single neuron is: ", bpnn.calculate_max_error())

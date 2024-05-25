@@ -155,7 +155,37 @@ class BackPropagation:
 class IntervalNeuralNet(BackPropagation):
     def __init__(self, training_set, topology, learning_rates, epochs):
         super().__init__(training_set, topology, learning_rates, epochs)
+        self.lower_activations = []
+        for i in range(len(topology)):
+            self.lower_activations.append(np.zeros((topology[i], 1)))
+        self.upper_activations = []
+        for i in range(len(topology)):
+            self.upper_activations.append(np.zeros((topology[i], 1)))
+        self.lower_output_activation = np.zeros((topology[-1], 1))
+        self.upeer_output_activation = np.zeros((topology[-1], 1))
 
+    def sigmoid_signum_std(self, w, slope):
+        return 1 / (1 + np.exp(-1 * slope * w))
+    
+    def sigmoid_signum_sym(self, w, slope):
+        return 1 / (1 + np.exp(slope * w))
+
+
+    def interval_feed_forward(self, lower_input, upper_input):
+        self.lower_activations[0] = lower_input.reshape(len(lower_input), 1)
+        self.upper_activations[0] = upper_input.reshape(len(upper_input), 1)
+        for i in range(1, self.num_layers):
+            w = self.weights[i - 1]
+            s = self.slopes[i]
+            biases = self.biases[i]
+            a = self.lower_activations[i - 1]
+            b = self.upper_activations[i - 1]
+            x = ((self.sigmoid_signum_std(w, s) * w) @ a) + ((self.sigmoid_signum_sym(w, s) * w) @ b)
+            y = ((self.sigmoid_signum_std(w, s) * w) @ b) + ((self.sigmoid_signum_sym(w, s) * w) @ a)
+            self.lower_activations[i] = self.sigmoid_function(x, s, biases)
+            self.upper_activations[i] = self.sigmoid_function(y, s, biases)
+        self.lower_output_activation = np.around(self.lower_activations[-1], decimals=2)
+        self.upper_output_activation = np.around(self.upper_activations[-1], decimals=2)
 
     def interval_run(self, input_data):
         lower_input = []
@@ -167,24 +197,8 @@ class IntervalNeuralNet(BackPropagation):
             else:
                 lower_input.append(item)
                 upper_input.append(item)
-        interval_data = list(zip(lower_input, upper_input))
+        self.interval_feed_forward(np.array(lower_input), np.array(upper_input))
+        lower_list = self.lower_output_activation.flatten().tolist()
+        upper_list = self.upper_output_activation.flatten().tolist()
+        interval_data = list(zip(lower_list, upper_list))
         return interval_data
-        """
-        lower_activations = []
-        upper_activations = []
-
-        # Perform feed forward with lower bounds
-        self.feed_forward(self.lower_bounds)
-        lower_activations.append(self.activations[-1].copy())
-
-        # Perform feed forward with upper bounds
-        self.feed_forward(self.upper_bounds)
-        upper_activations.append(self.activations[-1].copy())
-
-        # Perform feed forward with input data
-        self.feed_forward(input_data)
-        lower_activations.append(self.activations[-1].copy())
-        upper_activations.append(self.activations[-1].copy())
-
-        return lower_activations, upper_activations
-        """
